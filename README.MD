@@ -1,3 +1,9 @@
+#How to compile
+
+```
+mvn clean package
+```
+
 #How to use
 ```
 $SPARK_HOME/bin/spark-submit 
