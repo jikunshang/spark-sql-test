@@ -72,9 +72,15 @@ object SparkSqlTest {
             }
             val start = System.nanoTime()
             try {
-              val res = spark.sql(queryStr).collect()
+              val df = spark.sql(queryStr)
+              val res = df.collect()
               val durationInMs = (System.nanoTime() - start) / 1000 / 1000
               resultPerRound(index) = durationInMs
+              System.out.println(s"round $i $name return rows: " + res.size + " result: " + res.mkString)
+
+              val row = df.selectExpr(s"sum(crc32(concat_ws(',', *)))").head()
+              val hash = if (row.isNullAt(0)) 0 else row.getLong(0)
+              System.out.println(s"round $i $name result hash: " + hash)
             } catch {
               case _ => {
                 System.out.println(s"query $name failed.")
